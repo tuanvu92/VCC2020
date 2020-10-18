@@ -78,8 +78,8 @@
     },
     "quantize_configs": {
       "bot": {
-        "emb_dim": 128,
-        "n_emb": 512
+        "emb_dim": 64,
+        "n_emb": 256
       }
     }
   },
