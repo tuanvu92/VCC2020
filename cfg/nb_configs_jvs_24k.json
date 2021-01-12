@@ -1,0 +1,113 @@
+{
+  "training_configs": {
+    "model_name": "VQVAE2Stage",
+    "batch_size": 32,
+    "train_epoch": 500,
+    "n_warm_up_epoch": 10,
+    "warm_up_lr": 4e-4,
+    "learning_rate": 2e-4,
+    "checkpoint_dir": "vqvae_3stage_jvs",
+    "checkpoint_path": "",
+    "iters_per_checkpoint": 10000,
+    "iters_per_eval": 1000,
+    "seed": 12345,
+    "train_list": "file_lists/mel/jvs_train_list.txt",
+    "max_seq_len": 256
+  },
+
+  "validation_configs": {
+      "eval_list": "file_lists/mel/jvs_eval_list.txt",
+      "max_seq_len": 256,
+      "test_file": "/home/messier/PycharmProjects/data/jvs_ver1/mel24k/jvs002/BASIC5000_2523.npy",
+      "target_id": 11,
+      "fs": 24000,
+      "synthesizer_configs": {
+          "checkpoint_path": "parallel_wavegan/wavegan_checkpoint_vctk.pkl",
+          "stats_file": "parallel_wavegan/stats_vctk.h5",
+          "generator_params": {
+              "aux_channels": 80,
+              "aux_context_window": 2,
+              "dropout": 0.0,
+              "gate_channels": 128,
+              "in_channels": 1,
+              "kernel_size": 3,
+              "layers": 30,
+              "out_channels": 1,
+              "residual_channels": 64,
+              "skip_channels": 64,
+              "stacks": 3,
+              "upsample_net": "ConvInUpsampleNetwork",
+              "upsample_params":{
+                "upsample_scales": [4, 5, 3, 5]
+              },
+              "use_weight_norm": true
+          }
+      }
+    },
+
+  "model_configs": {
+    "mel_dim": 80,
+    "speaker_emb_dim": 16,
+    "use_c0": false,
+    "jitter": false,
+    "norm": false,
+    "mcc_stats_file": "stats/jvs_mcc_stats.npy",
+    "encoder_configs": {
+      "top": {
+        "residual_dim": 128,
+        "gate_dim": 128,
+        "skip_dim":  128,
+        "kernel_size":  5,
+        "down_sample_factor": 4,
+        "dilation_rate": [1, 2, 4, 1, 2, 4]
+      },
+      "bot": {
+        "output_dim":  128,
+        "residual_dim": 128,
+        "gate_dim": 128,
+        "skip_dim":  128,
+        "kernel_size":  5,
+        "down_sample_factor": 2,
+        "dilation_rate": [1, 2, 4, 1, 2, 4]
+      }
+    },
+    "decoder_configs": {
+      "top": {
+        "output_dim": 32,
+        "cond_dim": 16,
+        "residual_dim": 64,
+        "gate_dim": 64,
+        "skip_dim": 64,
+        "n_stage": 2,
+        "kernel_size": 5,
+        "n_upsample_factor": 4,
+        "dilation_rate": [1, 2, 4]
+      },
+      "bot": {
+        "cond_dim": 16,
+        "residual_dim": 128,
+        "gate_dim": 128,
+        "skip_dim": 256,
+        "n_stage": 4,
+        "kernel_size": 5,
+        "n_upsample_factor": 2,
+        "dilation_rate": [1, 2, 4, 8]
+      }
+    },
+    "quantize_configs": {
+      "top": {
+        "emb_dim": 32,
+        "n_emb": 128
+      },
+      "bot": {
+        "emb_dim": 32,
+        "n_emb": 128
+      }
+    }
+  },
+
+  "dist_configs": {
+        "dist_backend": "nccl",
+        "dist_url": "tcp://localhost:54321"
+  }
+}
